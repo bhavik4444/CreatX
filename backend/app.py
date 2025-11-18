@@ -22,8 +22,9 @@ def create_app():
     db.init_app(app)
 
     login_manager = LoginManager()
-    login_manager.login_view = "auth.login"
+    login_manager.login_view = "auth.landing"
     login_manager.init_app(app)
+
 
     @login_manager.user_loader
     def load_user(user_id):

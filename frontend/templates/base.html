@@ -24,7 +24,6 @@
     <nav class="rr-nav">
   {% if current_user.is_authenticated %}
   <a href="{{ url_for('game.dashboard') }}">Dashboard</a>
-  <a href="{{ url_for('game.lessons') }}">Lessons</a>
   <a href="{{ url_for('game.profile') }}">Profile</a>
   <a href="{{ url_for('auth.logout') }}">Logout</a>
   {% else %}

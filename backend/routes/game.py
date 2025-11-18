@@ -173,3 +173,7 @@ def minigame_result():
         }
     )
 
+@game_bp.route("/lessons")
+@login_required
+def lessons():
+    return render_template("lessons.html", user=current_user)

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<section class="rr-profile-page">
+  <div class="rr-card">
+    <h2>Your Ranger Profile</h2>
+    <div class="rr-profile-main">
+      <div class="rr-avatar-big rr-avatar-{{ user.avatar }}"></div>
+      <div>
+        <p><strong>{{ user.username }}</strong></p>
+        <p>Level {{ user.level }} · XP {{ user.xp }}</p>
+        <p>🔥 Streak: {{ user.streak }} day{{ 's' if user.streak != 1 }}</p>
+      </div>
+    </div>
+
+    <h3>Change Avatar</h3>
+    <div class="rr-avatar-row" id="avatar-chooser">
+      <button data-avatar="piggy" class="rr-avatar-choice rr-avatar-piggy"></button>
+      <button data-avatar="rocket" class="rr-avatar-choice rr-avatar-rocket"></button>
+      <button data-avatar="shield" class="rr-avatar-choice rr-avatar-shield"></button>
+      <button data-avatar="lightbulb" class="rr-avatar-choice rr-avatar-lightbulb"></button>
+    </div>
+
+    <p class="rr-small" id="avatar-status"></p>
+  </div>
+</section>
+{% endblock %}

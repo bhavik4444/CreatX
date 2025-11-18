@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<section class="rr-landing">
+  <div class="rr-landing-left">
+    <h2>Turn pocket money into superpower money.</h2>
+    <p>
+      Rupee Rangers teaches pre-teens how to handle money, avoid scams, and
+      understand banks using games, doodles, and cute avatars.
+    </p>
+
+    <ul class="rr-landing-list">
+      <li>💕 Kid-friendly levels (1–5 demo)</li>
+      <li>🎮 Quiz-style games & daily question sets</li>
+      <li>🔥 Streaks, XP and cartoon avatars</li>
+      <li>🛡️ Learn scam safety & banking basics</li>
+    </ul>
+  </div>
+
+  <div class="rr-landing-right">
+    {% if show_signup %}
+    <h3>Create your Ranger</h3>
+    <form class="rr-card" method="post" action="{{ url_for('auth.signup') }}">
+      <label>Username
+        <input type="text" name="username" required />
+      </label>
+      <label>Password
+        <input type="password" name="password" required />
+      </label>
+
+      <label>Pick your avatar</label>
+      <div class="rr-avatar-row">
+        <label class="rr-avatar-option">
+          <input type="radio" name="avatar" value="piggy" checked />
+          <span class="rr-avatar-icon rr-avatar-piggy"></span>
+          Piggy Saver
+        </label>
+        <label class="rr-avatar-option">
+          <input type="radio" name="avatar" value="rocket" />
+          <span class="rr-avatar-icon rr-avatar-rocket"></span>
+          Goal Rocket
+        </label>
+        <label class="rr-avatar-option">
+          <input type="radio" name="avatar" value="shield" />
+          <span class="rr-avatar-icon rr-avatar-shield"></span>
+          Scam Shield
+        </label>
+      </div>
+
+      <button class="rr-btn-primary" type="submit">Become a Rupee Ranger</button>
+      <p class="rr-small">
+        Already have an account?
+        <a href="{{ url_for('auth.landing') }}">Log in</a>
+      </p>
+    </form>
+    {% else %}
+    <h3>Log in</h3>
+    <form class="rr-card" method="post" action="{{ url_for('auth.login') }}">
+      <label>Username
+        <input type="text" name="username" required />
+      </label>
+      <label>Password
+        <input type="password" name="password" required />
+      </label>
+
+      <button class="rr-btn-primary" type="submit">Start Playing</button>
+      <p class="rr-small">
+        New here?
+        <a href="{{ url_for('auth.signup') }}">Create a Rupee Ranger</a>
+      </p>
+    </form>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

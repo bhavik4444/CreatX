@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Play Level {{ level }}{% endblock %}
+
+{% block content %}
+<section class="rr-play">
+  <div class="rr-card">
+    <h2>Level {{ level }} Quiz</h2>
+    <p class="rr-small">
+      Answer these kid-friendly questions. Each correct answer gives XP.
+    </p>
+
+    {% if result %}
+      <div class="rr-result">
+        <p>You got {{ result.correct }} out of {{ result.total }} correct!</p>
+        <p>XP earned: {{ result.xp }}</p>
+      </div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('game.submit_answers') }}">
+      <input type="hidden" name="level" value="{{ level }}" />
+      {% for q in questions %}
+      <div class="rr-question">
+        <p class="rr-question-text">{{ loop.index }}. {{ q.text }}</p>
+        <div class="rr-options">
+          {% for letter, text in {
+            'A': q.option_a,
+            'B': q.option_b,
+            'C': q.option_c,
+            'D': q.option_d
+          }.items() %}
+          <label class="rr-option">
+            <input
+              type="radio"
+              name="q_{{ q.id }}"
+              value="{{ letter }}"
+              required="{{ 'required' if loop.first }}"
+            />
+            <span class="rr-option-letter">{{ letter }}</span>
+            <span>{{ text }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+
+      <button class="rr-btn-primary" type="submit">Submit answers</button>
+      <a href="{{ url_for('game.dashboard') }}" class="rr-btn-link">Back to dashboard</a>
+    </form>
+  </div>
+</section>
+{% endblock %}

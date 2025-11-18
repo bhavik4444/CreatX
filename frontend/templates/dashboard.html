@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="rr-dashboard">
+  <div class="rr-dashboard-top">
+    <!-- PROFILE CARD WITH LESSONS BUTTON -->
+    <div class="rr-card rr-profile-card">
+      <div class="rr-profile-main">
+        <div class="rr-avatar-big rr-avatar-{{ user.avatar }}"></div>
+        <div>
+          <h2>{{ user.username }}</h2>
+          <p>Level {{ user.level }} · XP {{ user.xp }}</p>
+          <p>🔥 Streak: {{ user.streak }} day{{ 's' if user.streak != 1 }}</p>
+        </div>
+      </div>
+
+      <div class="rr-progress-bar">
+        <div
+          class="rr-progress-fill"
+          style="width: {{ (user.xp / (user.level * 100) * 100) if user.level>0 else 0 }}%;"
+        ></div>
+      </div>
+
+      <p class="rr-small">
+        Reach {{ user.level * 100 }} XP to hit the next level (max 5 for demo).
+      </p>
+
+      <!-- MAIN ACTIONS: LESSONS + MINI-GAME -->
+      <div class="rr-profile-actions">
+        <a
+          href="{{ url_for('game.lessons') }}"
+          class="rr-btn-primary rr-btn-main-lesson"
+        >
+          📘 Start Lessons
+        </a>
+
+        <a
+          href="{{ url_for('game.minigame') }}"
+          class="rr-btn-secondary"
+        >
+          🎮 Play Mini-Game
+        </a>
+      </div>
+    </div>
+
+    <!-- DAILY MISSIONS CARD -->
+    <div class="rr-card rr-daily-card">
+      <h3>Today’s Money Missions</h3>
+      <p class="rr-small">
+        Quick daily question set based on your level. Answer them to keep your streak!
+      </p>
+      <button class="rr-btn-secondary" id="load-daily-btn">
+        Load today’s questions
+      </button>
+      <div id="daily-container" class="rr-daily-container"></div>
+    </div>
+  </div>
+
+  <!-- LEVEL GRID + MINI-GAME LINK -->
+  <div class="rr-level-grid">
+    {% for lvl, count in levels.items() %}
+    <a href="{{ url_for('game.play_level', level=lvl) }}" class="rr-card rr-level-card">
+      <div class="rr-level-badge">Level {{ lvl }}</div>
+      <p class="rr-level-title">
+        {% if lvl == 1 %} Money Basics
+        {% elif lvl == 2 %} Personal Money
+        {% elif lvl == 3 %} Banks & Govt
+        {% elif lvl == 4 %} Scam Safety
+        {% else %} Ranger Master
+        {% endif %}
+      </p>
+      <p class="rr-small">{{ count }} questions in this level</p>
+      <p class="rr-tagline">
+        {% if lvl == 1 %}What is money? How not to blow it.
+        {% elif lvl == 2 %}Goals, saving, and spending smart.
+        {% elif lvl == 3 %}How banks and schemes help your money.
+        {% elif lvl == 4 %}Spot the fakes and stay safe.
+        {% else %}Mix of everything you learned.
+        {% endif %}
+      </p>
+    </a>
+    {% endfor %}
+
+    <!-- Extra card for mini-game (still nice to keep) -->
+    <a href="{{ url_for('game.minigame') }}" class="rr-card rr-level-card rr-minigame-link">
+      <div class="rr-level-badge">Mini-Game</div>
+      <p class="rr-level-title">Coin Jars Game</p>
+      <p class="rr-small">Use sliders to split money into fun, savings, and safety.</p>
+      <p class="rr-tagline">Experiment and see what a smart plan looks like.</p>
+    </a>
+  </div>
+</section>
+{% endblock %}

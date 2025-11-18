@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Lessons{% endblock %}
+
+{% block content %}
+<section class="rr-lessons-grid">
+  <div class="rr-card rr-lessons-list-card">
+    <h2>Money Lessons</h2>
+    <p class="rr-small">
+      Pick a topic to learn in simple language. Then try the quiz or mini-game to practice.
+    </p>
+
+    <ul class="rr-lesson-list">
+      {% for lesson in lessons %}
+      <li>
+        <a
+          href="{{ url_for('game.lesson_detail', slug=lesson.slug) }}"
+          class="rr-lesson-item {% if selected_lesson and selected_lesson.slug == lesson.slug %}rr-lesson-item-active{% endif %}"
+        >
+          <div>
+            <p class="rr-lesson-title">{{ lesson.title }}</p>
+            <p class="rr-small">{{ lesson.category }}</p>
+          </div>
+          <div class="rr-lesson-meta">
+            <span class="rr-lesson-chip">{{ lesson.tag }}</span>
+            <span class="rr-small">{{ lesson.level }}</span>
+          </div>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="rr-card rr-lesson-detail-card">
+    {% if selected_lesson %}
+    <h2>{{ selected_lesson.title }}</h2>
+    <p class="rr-small rr-lesson-category">
+      {{ selected_lesson.category }} · {{ selected_lesson.level }}
+    </p>
+    <p class="rr-lesson-summary">
+      {{ selected_lesson.summary }}
+    </p>
+
+    <h3>What you’ll learn</h3>
+    <ul class="rr-lesson-points">
+      {% for point in selected_lesson.learn_points %}
+      <li>{{ point }}</li>
+      {% endfor %}
+    </ul>
+
+    <h3>Think about these</h3>
+    <ul class="rr-lesson-examples rr-small">
+      {% for ex in selected_lesson.examples %}
+      <li>{{ ex }}</li>
+      {% endfor %}
+    </ul>
+
+    <div class="rr-lesson-footer">
+      <a href="{{ url_for('game.dashboard') }}" class="rr-btn-secondary">
+        Back to dashboard
+      </a>
+      <a href="{{ url_for('game.minigame') }}" class="rr-btn-link">
+        Try the Coin Jars game
+      </a>
+    </div>
+    {% else %}
+    <p>No lessons found.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

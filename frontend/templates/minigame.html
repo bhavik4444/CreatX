@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Coin Jars Game{% endblock %}
+
+{% block content %}
+<section class="rr-minigame">
+  <div class="rr-card rr-minigame-card">
+    <h2>Coin Jars Mini-Game</h2>
+    <p class="rr-small">
+      Move the sliders so that your total adds up to <strong>100%</strong>.
+      Try to make a smart money plan for this situation.
+    </p>
+
+    <div class="rr-minigame-scenario">
+      <h3>{{ scenario.title }}</h3>
+      <p class="rr-small">
+        {{ scenario.text }}
+        (Total money: ₹{{ scenario.amount }})
+      </p>
+    </div>
+
+    <div class="rr-minigame-jars">
+      <div class="rr-jar rr-jar-fun">
+        <h4>🎉 Fun now</h4>
+        <p class="rr-small">Snacks, toys, small treats.</p>
+        <input type="range" min="0" max="100" value="40" id="jar-fun" />
+        <p><span id="jar-fun-label">40</span>%</p>
+      </div>
+
+      <div class="rr-jar rr-jar-save">
+        <h4>🐷 Savings</h4>
+        <p class="rr-small">Future goals like gadgets or trips.</p>
+        <input type="range" min="0" max="100" value="35" id="jar-save" />
+        <p><span id="jar-save-label">35</span>%</p>
+      </div>
+
+      <div class="rr-jar rr-jar-safe">
+        <h4>🛟 Safety</h4>
+        <p class="rr-small">Emergencies like repairs, health, travel.</p>
+        <input type="range" min="0" max="100" value="25" id="jar-safe" />
+        <p><span id="jar-safe-label">25</span>%</p>
+      </div>
+    </div>
+
+    <div class="rr-minigame-total">
+      <p>
+        Total: <strong><span id="jar-total">100</span>%</strong>
+        <span id="jar-total-status" class="rr-small">(Nice!)</span>
+      </p>
+    </div>
+
+    <div class="rr-minigame-footer">
+      <button class="rr-btn-primary" id="minigame-check">Check my plan</button>
+      <a href="{{ url_for('game.dashboard') }}" class="rr-btn-link">Back to dashboard</a>
+    </div>
+
+    <div id="minigame-feedback" class="rr-minigame-feedback rr-small"></div>
+  </div>
+
+  <div class="rr-minigame-stickers">
+    <div class="rr-sticker rr-sticker-star">Smart Saver ⭐</div>
+    <div class="rr-sticker rr-sticker-heart">Money Hero 💖</div>
+    <div class="rr-sticker rr-sticker-shield">Scam Safe 🛡️</div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function() {
+    const funInput = document.getElementById("jar-fun");
+    const saveInput = document.getElementById("jar-save");
+    const safeInput = document.getElementById("jar-safe");
+    const funLabel = document.getElementById("jar-fun-label");
+    const saveLabel = document.getElementById("jar-save-label");
+    const safeLabel = document.getElementById("jar-safe-label");
+    const totalLabel = document.getElementById("jar-total");
+    const totalStatus = document.getElementById("jar-total-status");
+    const feedback = document.getElementById("minigame-feedback");
+    const checkBtn = document.getElementById("minigame-check");
+
+    function updateLabels() {
+      funLabel.textContent = funInput.value;
+      saveLabel.textContent = saveInput.value;
+      safeLabel.textContent = safeInput.value;
+      const total =
+        parseInt(funInput.value, 10) +
+        parseInt(saveInput.value, 10) +
+        parseInt(safeInput.value, 10);
+      totalLabel.textContent = total;
+      if (total === 100) {
+        totalStatus.textContent = "(Perfect balance!)";
+        totalStatus.style.color = "#22c55e";
+        checkBtn.disabled = false;
+      } else {
+        totalStatus.textContent = "(Try to make it exactly 100%)";
+        totalStatus.style.color = "#d97706";
+        checkBtn.disabled = true;
+      }
+    }
+
+    funInput.addEventListener("input", updateLabels);
+    saveInput.addEventListener("input", updateLabels);
+    safeInput.addEventListener("input", updateLabels);
+    updateLabels();
+
+    checkBtn.addEventListener("click", async () => {
+      const fun = parseInt(funInput.value, 10);
+      const save = parseInt(saveInput.value, 10);
+      const safe = parseInt(safeInput.value, 10);
+
+      let xp = 10;
+      let msg = "Nice try! You thought about splitting money in different jars. XP +10.";
+
+      if (save >= 30 && safe >= 20 && fun <= 50) {
+        xp = 30;
+        msg = "Awesome! This is a very smart plan: fun, savings and safety are all covered. XP +30.";
+      } else if (save >= 20 && fun <= 60) {
+        xp = 20;
+        msg = "Good job! You’re saving and still having fun. XP +20.";
+      }
+
+      feedback.textContent = "Checking your plan...";
+      feedback.style.color = "#4b5563";
+
+      try {
+        const res = await fetch("/app/minigame_result", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ xp })
+        });
+        const data = await res.json();
+        if (data.status === "ok") {
+          feedback.textContent = msg + " New level: " + data.level + ", total XP: " + data.new_xp + ".";
+          feedback.style.color = "#16a34a";
+          document.body.classList.add("rr-confetti");
+          setTimeout(() => document.body.classList.remove("rr-confetti"), 900);
+        } else {
+          feedback.textContent = "Server didn’t like that move. Try again later.";
+          feedback.style.color = "#b91c1c";
+        }
+      } catch (err) {
+        feedback.textContent = "Couldn’t talk to the server. Your plan is still smart though.";
+        feedback.style.color = "#b91c1c";
+      }
+    });
+  })();
+</script>
+{% endblock %}
